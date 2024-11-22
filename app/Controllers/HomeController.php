@@ -3,18 +3,29 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
-use App\Core\DB;
+use App\Core\Request;
+use App\Core\Response;
 use App\Core\Validator;
 use App\Core\View;
 use App\Exception\ValidationException;
+use App\Models\User;
 
 class HomeController extends Controller
 {
+    public User $user;
+
+    public function __construct(Request $request, Response $response)
+    {
+        parent::__construct($request, $response);
+        $this->user = new User();
+    }
+
     public function index()
     {
         $data = $this->getBody();
         $validator = new Validator();
 
+        // Rules for validation
         $rules = [
             // 'name' => 'required|min:3|max:10',
             // 'email' => 'required|email',
@@ -24,6 +35,8 @@ class HomeController extends Controller
         try {
             $validator->validate($data, $rules);
             // $token = JwtFunctions::generate_jwt($user['id']);
+
+            $this->user->all();
 
             $this->jsonResponse(['message' => 'User created successfully'], 200);
         } catch (ValidationException $e) {

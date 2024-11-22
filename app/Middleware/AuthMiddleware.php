@@ -10,12 +10,12 @@ class AuthMiddleware implements MiddlewareInterface
 {
     public function handle(Request $request, Response $response)
     {
-        $data = $request->getBody();
-        $user_id = $data['user_id'] ?? '';
-        if (!Session::has($user_id)) {
-            $response->jsonResponse(['error' => 'Unauthorized'], 401);
-        }
+        // Handling authentication using Session 
+        // if (!Session::has("USER_ID")) {
+        //     $response->jsonResponse(['error' => 'Unauthorized'], 401);
+        // }
 
+        // Handling JWT token 
         // // Get the Authorization header
         // $authHeader = $request->getHeader('Authorization');
 

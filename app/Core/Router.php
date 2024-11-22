@@ -68,7 +68,7 @@ class Router
             foreach (array_reverse($middlewares) as $middleware) {
                 if (class_exists($middleware)) {
                     $middlewareInstance = new $middleware();
-                    if (method_exists($middlewareInstance, 'handle')) {
+                    if (method_exists($middlewareInstance, method: 'handle')) {
                         $middlewareInstance->handle($this->request, $this->response);
                     } else {
                         throw new Exception("Method does not exist on Class: " . $middleware . ': ' . $method);

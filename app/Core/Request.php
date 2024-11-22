@@ -2,12 +2,14 @@
 
 namespace App\Core;
 
+require_once __DIR__ . '/../config/config.php';
+
 class Request
 {
     public function getPath(): string
     {
         $path = $_SERVER['REQUEST_URI'] ?? '/';
-        $path = str_replace("/rent-backend/public/", "/", $path);
+        $path = str_replace(ROOT_DIRECTORY, "/", $path);
 
         $position = strpos($path, '?');
 
@@ -29,6 +31,12 @@ class Request
         foreach ($_GET as $key => $value) {
             $queryParams[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
         }
+
+        // Remove 'url' key if it exists in the array
+        if (array_key_exists('url', $queryParams)) {
+            unset($body['url']);
+        }
+
         return $queryParams;
     }
 
@@ -52,6 +60,12 @@ class Request
                 $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
+
+        // Remove 'url' key if it exists in the array
+        if (array_key_exists('url', $body)) {
+            unset($body['url']);
+        }
+
         return $body;
     }
 
