@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Core\Validator;
 use App\Core\View;
 use App\Exception\ValidationException;
@@ -38,14 +39,14 @@ class HomeController extends Controller
 
             $this->user->all();
 
-            $this->jsonResponse(['message' => 'User created successfully'], 200);
+            // $this->jsonResponse(['message' => 'User created successfully'], 200);
+            $data = [['name' => 'Ayush', 'class' => 'programmar', 'language' => 'php']];
+
+            return View::make('index', ['data' => $data]);
         } catch (ValidationException $e) {
             $errors = $e->getErrors();
             $this->jsonResponse(['errors' => $errors, 'message' => $e->getMessage()], 422);
         }
-
-        return $this->jsonResponse($data, 200);
-        // return View::make('index', ['name' => 'Ayush']);
     }
 
     public function add()

@@ -4,6 +4,8 @@ namespace App\Core;
 
 use App\Exception\ViewNotFoundException;
 
+require_once __DIR__ . '/../config/config.php';
+
 class View
 {
     const VIEW_PATH = __DIR__ . '/../../views';
@@ -34,6 +36,9 @@ class View
         } catch (ViewNotFoundException $e) {
             $e->getFMessage();
         }
+
+        $this->params['session'] = new Session();
+        $this->params['route'] = ROOT_DIRECTORY;
 
         foreach ($this->params as $key => $value) {
             $$key = $value;
