@@ -9,6 +9,13 @@ class Validator
     protected array $errors = [];
     protected array $data = [];
 
+    private ?\mysqli $db;
+
+    public function __construct()
+    {
+        $this->db = DB::getConnection();
+    }
+
     public function validate(array $data, array $rules): bool
     {
         foreach ($rules as $field => $rulesSet) {
@@ -86,4 +93,38 @@ class Validator
         }
     }
 
+    protected function validateUnique($field, $value, $parameters): void
+    {
+        [$table, $column] = explode(',', $parameters);
+
+        $stmt = $this->db->prepare("SELECT * FROM {$table} WHERE {$column} = ?");
+        $type = '';
+        if (is_int($value)) {
+            $type = 'i';
+        }
+        if (is_string($value)) {
+            $type = 's';
+        }
+        if (is_float($value)) {
+            $type = 'd';
+        } else {
+            $type = 's';
+        }
+        $stmt->bind_param($type, $value);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $this->errors[$field][] = "$field must be unique.";
+        }
+        $stmt->close();
+    }
+
+    protected function validateEnum($field, $value, $parameter): void
+    {
+        $allowedValues = explode(',', $parameter);
+
+        if (!in_array($value, $allowedValues, true)) {
+            $this->errors[$field][] = "$field must be one of the following values: " . implode(', ', $allowedValues);
+        }
+    }
 }
